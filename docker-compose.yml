@@ -8,9 +8,9 @@ services:
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stat
-      - SPRING_DATASOURCE_USERNAME=stat
-      - SPRING_DATASOURCE_PASSWORD=stat
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
+      - SPRING_DATASOURCE_USERNAME=stats
+      - SPRING_DATASOURCE_PASSWORD=stats
 
   stats-db:
     image: postgres:16.1
@@ -18,9 +18,9 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_PASSWORD=stat
-      - POSTGRES_USER=stat
-      - POSTGRES_DB=stat
+      - POSTGRES_PASSWORD=stats
+      - POSTGRES_USER=stats
+      - POSTGRES_DB=stats
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -36,9 +36,9 @@ services:
     depends_on:
       - ewm-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
-      - SPRING_DATASOURCE_USERNAME=ewm
-      - SPRING_DATASOURCE_PASSWORD=ewm
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmdb
+      - SPRING_DATASOURCE_USERNAME=ewmdb
+      - SPRING_DATASOURCE_PASSWORD=ewmdb
 
   ewm-db:
     image: postgres:16.1
@@ -46,9 +46,9 @@ services:
     ports:
       - "6542:5432"
     environment:
-      - POSTGRES_PASSWORD=ewm
-      - POSTGRES_USER=ewm
-      - POSTGRES_DB=ewm
+      - POSTGRES_PASSWORD=ewmdb
+      - POSTGRES_USER=ewmdb
+      - POSTGRES_DB=ewmdb
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
