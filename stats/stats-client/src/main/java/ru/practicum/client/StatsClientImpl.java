@@ -28,7 +28,7 @@ public class StatsClientImpl implements StatsClient {
     @Override
     public List<ResponseStatDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        try {
+        //try {
             return restClient.get()
                     .uri(uriBuilder -> uriBuilder.path("/stats")
                     .queryParam("start", start.format(formatter))
@@ -38,19 +38,19 @@ public class StatsClientImpl implements StatsClient {
                     .build())
                     .retrieve()
                     .body(new ParameterizedTypeReference<>(){});
-        } catch (Exception e) {
+        /*} catch (Exception e) {
             log.error(e.getMessage());
             return Collections.emptyList();
-        }
+        }*/
     }
 
     @Override
     public ResponseEntity<StatDto> hit(StatDto statDto) {
-        try {
+        //try {
             return restClient.post().uri("/hit").body(statDto).retrieve().toEntity(StatDto.class);
-        } catch (Exception e) {
+        /*} catch (Exception e) {
             log.error(e.getMessage());
             return null;
-        }
+        }*/
     }
 }
