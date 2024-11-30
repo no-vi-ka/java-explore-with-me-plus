@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import ru.practicum.ResponseStatDto;
@@ -44,9 +45,9 @@ public class StatsClientImpl implements StatsClient {
     }
 
     @Override
-    public StatDto hit(StatDto statDto) {
+    public ResponseEntity<StatDto> hit(StatDto statDto) {
         try {
-            return restClient.post().uri("/hit").body(statDto).retrieve().body(StatDto.class);
+            return restClient.post().uri("/hit").body(statDto).retrieve().toEntity(StatDto.class);
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;

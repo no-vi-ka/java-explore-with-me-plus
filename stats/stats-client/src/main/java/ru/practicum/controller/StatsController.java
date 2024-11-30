@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ResponseStatDto;
 import ru.practicum.StatDto;
@@ -30,7 +31,7 @@ public class StatsController {
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
-    public StatDto saveHitRequest(@RequestBody @Valid StatDto statDto) {
+    public ResponseEntity<StatDto> saveHitRequest(@RequestBody @Valid StatDto statDto) {
         return statsClient.hit(statDto);
     }
 }
