@@ -27,6 +27,13 @@ services:
       interval: 5s
       retries: 10
 
+  stats-client:
+    build: stats/stats-client
+    image: stats-client
+    container_name: stats-client
+    ports:
+      - "9091:9091"
+
   ewm-service:
     build: main-service
     image: main-service
