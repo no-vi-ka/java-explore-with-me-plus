@@ -12,7 +12,6 @@ import ru.practicum.StatDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-//import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -28,29 +27,23 @@ public class StatsClientImpl implements StatsClient {
     @Override
     public List<ResponseStatDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        //try {
-            return restClient.get()
-                    .uri(uriBuilder -> uriBuilder.path("/stats")
-                    .queryParam("start", start.format(formatter))
-                    .queryParam("end", end.format(formatter))
-                    .queryParam("uris", uris)
-                    .queryParam("unique", unique)
-                    .build())
-                    .retrieve()
-                    .body(new ParameterizedTypeReference<>(){});
-        /*} catch (Exception e) {
-            log.error(e.getMessage());
-            return Collections.emptyList();
-        }*/
+        var response = restClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/stats")
+                        .queryParam("start", start.format(formatter))
+                        .queryParam("end", end.format(formatter))
+                        .queryParam("uris", uris)
+                        .queryParam("unique", unique)
+                        .build())
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ResponseStatDto>>() {
+                });
+        log.info("Получен ответ от сервера по запросу /stats с параметрами: start={}, end={}, uris={}, unique={}",
+                start, end, uris, unique);
+        return response;
     }
 
     @Override
     public ResponseEntity<StatDto> hit(StatDto statDto) {
-        //try {
-            return restClient.post().uri("/hit").body(statDto).retrieve().toEntity(StatDto.class);
-        /*} catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
-        }*/
+        return restClient.post().uri("/hit").body(statDto).retrieve().toEntity(StatDto.class);
     }
 }
