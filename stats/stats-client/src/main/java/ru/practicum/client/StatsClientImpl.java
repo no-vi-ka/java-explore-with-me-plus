@@ -20,12 +20,13 @@ public class StatsClientImpl implements StatsClient {
     private final RestClient restClient;
 
     @Autowired
-    public StatsClientImpl(@Value("${stats-server.url}") String statsUrl) {
+    public StatsClientImpl(@Value("${stats-client.url}") String statsUrl) {
         this.restClient = RestClient.builder().baseUrl(statsUrl).build();
     }
 
     @Override
     public List<ResponseStatDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        log.info("Get stats from {}", uris);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         try {
             var response = restClient.get()
