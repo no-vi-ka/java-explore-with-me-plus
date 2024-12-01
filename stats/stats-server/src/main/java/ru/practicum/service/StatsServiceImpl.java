@@ -18,12 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StatsServiceImpl implements StatsService {
     private final StatRepository statRepository;
+    private final StatMapper statMapper;
 
     @Override
     public StatDto saveRequest(StatDto statDto) {
         log.info("Save request: {}", statDto);
-        Stat stat = StatMapper.toStat(statDto);
-        return StatMapper.toStatDto(statRepository.save(stat));
+        Stat stat = statMapper.toEntity(statDto);
+        return statMapper.toDto(statRepository.save(stat));
     }
 
     @Override
