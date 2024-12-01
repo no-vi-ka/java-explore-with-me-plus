@@ -23,6 +23,7 @@ public class StatsClientImpl implements StatsClient {
     @Autowired
     public StatsClientImpl(@Value("${stats-server.url}") String statsUrl) {
         this.restClient = RestClient.builder().baseUrl(statsUrl).build();
+        log.info("Server url {}", statsUrl);
     }
 
     @Override
