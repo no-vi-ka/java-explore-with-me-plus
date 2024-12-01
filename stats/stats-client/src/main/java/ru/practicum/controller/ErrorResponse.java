@@ -1,4 +1,4 @@
-package ru.practicum.controller;
-
-public record ErrorResponse(String error, String description) {
-}
+//package ru.practicum.controller;
+//
+//public record ErrorResponse(String error, String description) {
+//}
