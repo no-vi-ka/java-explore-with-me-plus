@@ -1,12 +1,11 @@
 package ru.practicum.mapper;
 
 import org.mapstruct.Mapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.MappingConstants;
 import ru.practicum.StatDto;
 import ru.practicum.model.Stat;
 
-@Component
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface StatMapper {
     StatDto toDto(Stat stat);
 
