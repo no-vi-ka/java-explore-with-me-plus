@@ -26,59 +26,62 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
-        log.info("Starting create category.");
-        checkCategoryName(newCategoryDto.getName());
+        log.info("Starting create category with name = {}.", newCategoryDto.getName());
+        checkExists(newCategoryDto.getName());
+        checkLength(newCategoryDto.getName());
         Category newCategory = categoryMapper.toCategory(newCategoryDto);
         Category created = categoryRepository.save(newCategory);
-        log.info("Category with id = " + created.getId() + " created.");
+        log.info("Category with id = {} created.", created.getId());
         return categoryMapper.toCategoryDto(created);
     }
 
     @Override
-    public void deleteCategory(Long catId) {
-        log.info("Starting delete category with id = " + catId + ".");
+    public void deleteCategory(long catId) {
         if (!categoryRepository.existsById(catId)) {
             throw new NotFoundException("Category with id = " + catId + " not found.");
         }
         categoryRepository.deleteById(catId);
-        log.info("Category with id = " + catId + " deleted.");
     }
 
     @Override
-    public CategoryDto updateCategory(Long catId, NewCategoryDto categoryDto) {
-        log.info("Starting update category with id = " + catId + ".");
+    public CategoryDto updateCategory(long catId, NewCategoryDto categoryDto) {
+        log.info("Starting update category with id = {}, name for update = {}.", catId, categoryDto.getName());
         Category toUpdate = categoryRepository.findById(catId).orElseThrow(() ->
                 new NotFoundException("Category with id = " + catId + " not found."));
         if (toUpdate.getName().equals(categoryDto.getName())) {
             return categoryMapper.toCategoryDto(toUpdate);
         }
-        checkCategoryName(categoryDto.getName());
+        checkExists(categoryDto.getName());
+        checkLength(categoryDto.getName());
         toUpdate.setName(categoryDto.getName());
-        log.info("Category with id = " + catId + " updated.");
+        log.info("Category with id = {} updated", catId);
         return categoryMapper.toCategoryDto(toUpdate);
     }
 
     @Override
     public List<CategoryDto> getAllCategories(Integer from, Integer size) {
-        log.info("Started get all categories.");
+        log.info("Starting get all categories with params: from = {}, size = {}.", from, size);
         List<Category> categories = categoryRepository.findAll(PageRequest.of(from, size)).getContent();
-        log.info("Get all categories finished.");
-        return categories.stream()
-                .map(categoryMapper::toCategoryDto)
-                .collect(Collectors.toList());
+        log.info("Got all categories, count = {}", categories.size());
+        return categoryMapper.toCategoryDtoList(categories);
     }
 
     @Override
-    public CategoryDto getCategoryById(Long catId) {
+    public CategoryDto getCategoryById(long catId) {
+        log.info("Starting get category with id = {}", catId);
         Category finded = categoryRepository.findById(catId).orElseThrow(() ->
                 new NotFoundException("Category with id = " + catId + " not found."));
+        log.info("Category with id = {} was found.", catId);
         return categoryMapper.toCategoryDto(finded);
     }
 
-    private void checkCategoryName(String name) {
+    private void checkExists(String name) {
         if (categoryRepository.findByNameIgnoreCase(name.toLowerCase()) != null) {
             throw new DataAlreadyInUseException("Category with this name has already exist.");
         }
+    }
+
+    private void checkLength(String name) {
         if (name.length() > 50) {
             throw new ValidationException("Length of category name > 50.");
         }

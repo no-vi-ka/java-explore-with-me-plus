@@ -25,23 +25,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers(List<Long> ids, Integer from, Integer size) {
-        log.info("Started get all users.");
+        log.info("Starting get all users with params: from = {}, size = {}.", from, size);
         if (ids == null || ids.isEmpty()) {
             return userRepository.findAll(PageRequest.of(from, size)).stream()
                     .map(userMapper::toUserDto)
                     .collect(Collectors.toList());
         }
         List<User> users = userRepository.findAllByIdIn(ids, PageRequest.of(from, size));
-        log.info("Got all users.");
-        return users.stream()
-                .map(userMapper::toUserDto)
-                .collect(Collectors.toList());
+        log.info("Got all users, count = {}.", users.size());
+        return userMapper.toUserDtoList(users);
     }
 
     @Override
     public UserDto createUser(NewUserRequest newUserRequest) {
-        log.info("Starting create user.");
-        if (newUserRequest.getName().length() < 2 || newUserRequest.getName().length() > 250 || newUserRequest.getEmail().length() < 6 || newUserRequest.getEmail().length() > 254) {
+        log.info("Starting create user with name = {}, email = {}.", newUserRequest.getName(),
+                newUserRequest.getEmail());
+        if (newUserRequest.getName().length() < 2 || newUserRequest.getName().length() > 250 ||
+                newUserRequest.getEmail().length() < 6 || newUserRequest.getEmail().length() > 254) {
             throw new ValidationException("Length of name or email is out of bounds.");
         }
         if (userRepository.findByEmail(newUserRequest.getEmail()) != null) {
@@ -49,17 +49,15 @@ public class UserServiceImpl implements UserService {
         }
         User newUser = userMapper.toUser(newUserRequest);
         User created = userRepository.save(newUser);
-        log.info("User with id = " + created.getId() + " created.");
+        log.info("User with id = {} created.", created.getId());
         return userMapper.toUserDto(created);
     }
 
     @Override
-    public void deleteUser(Long userId) {
-        log.info("Started delete user with id = " + userId + ".");
+    public void deleteUser(long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with id = " + userId + " not found.");
         }
         userRepository.deleteById(userId);
-        log.info("User with id = " + userId + " deleted.");
     }
 }
