@@ -26,12 +26,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllUsers(List<Long> ids, Integer from, Integer size) {
         log.info("Started get all users.");
-        if (from == null) {
-            from = 0;
-        }
-        if (size == null) {
-            size = 10;
-        }
         if (ids == null || ids.isEmpty()) {
             return userRepository.findAll(PageRequest.of(from, size)).stream()
                     .map(userMapper::toUserDto)

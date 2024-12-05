@@ -27,7 +27,7 @@ public class ErrorHandler {
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
         String stackTrace = sw.toString();
-        return new ApiError(List.of(stackTrace), e.getMessage(), "The required object was not found.",
+        return new ApiError(stackTrace, e.getMessage(), "The required object was not found.",
                 HttpStatus.NOT_FOUND, LocalDateTime.now().format(formatter));
     }
 
@@ -38,7 +38,7 @@ public class ErrorHandler {
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
         String stackTrace = sw.toString();
-        return new ApiError(List.of(stackTrace), e.getMessage(), "Incorrectly made request.",
+        return new ApiError(stackTrace, e.getMessage(), "Incorrectly made request.",
                 HttpStatus.NOT_FOUND, LocalDateTime.now().format(formatter));
     }
 
@@ -49,7 +49,7 @@ public class ErrorHandler {
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
         String stackTrace = sw.toString();
-        return new ApiError(List.of(stackTrace), e.getMessage(), "Integrity constraint has been violated.",
+        return new ApiError(stackTrace, e.getMessage(), "Integrity constraint has been violated.",
                 HttpStatus.NOT_FOUND, LocalDateTime.now().format(formatter));
     }
 }

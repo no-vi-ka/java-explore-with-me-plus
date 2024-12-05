@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ApiError {
-    private List<String> errors;
+    private String errors;
     private String message;
     private String reason;
     private HttpStatus status;
