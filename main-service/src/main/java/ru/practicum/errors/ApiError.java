@@ -7,8 +7,6 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor

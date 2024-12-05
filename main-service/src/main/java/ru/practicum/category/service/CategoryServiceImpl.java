@@ -14,7 +14,6 @@ import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.exceptions.ValidationException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
