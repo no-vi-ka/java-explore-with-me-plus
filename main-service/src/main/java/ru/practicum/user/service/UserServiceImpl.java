@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import ru.practicum.exceptions.DataAlreadyInUseException;
 import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.exceptions.ValidationException;
@@ -26,7 +27,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllUsers(List<Long> ids, Integer from, Integer size) {
         log.info("Starting get all users with params: from = {}, size = {}.", from, size);
-        if (ids == null || ids.isEmpty()) {
+        if (CollectionUtils.isEmpty(ids)) {
             return userRepository.findAll(PageRequest.of(from, size)).stream()
                     .map(userMapper::toUserDto)
                     .collect(Collectors.toList());
