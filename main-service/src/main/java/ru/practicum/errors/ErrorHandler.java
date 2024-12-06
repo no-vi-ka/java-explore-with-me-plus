@@ -1,6 +1,7 @@
 package ru.practicum.errors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,13 +20,16 @@ import java.time.format.DateTimeFormatter;
 public class ErrorHandler {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    @Value("${api.log.stacktrace}")
+    private boolean isStackTrace;
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNotFoundException(final NotFoundException e) {
         log.error("404 {}", e.getMessage(), e);
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        String stackTrace = sw.toString();
+        String stackTrace = isStackTrace ? sw.toString() : "Stack trace not allowed by property";
         return new ApiError(stackTrace, e.getMessage(), "The required object was not found.",
                 HttpStatus.NOT_FOUND, LocalDateTime.now().format(formatter));
     }
@@ -36,7 +40,7 @@ public class ErrorHandler {
         log.error("400 {}", e.getMessage(), e);
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        String stackTrace = sw.toString();
+        String stackTrace = isStackTrace ? sw.toString() : "Stack trace not allowed by property";
         return new ApiError(stackTrace, e.getMessage(), "Incorrectly made request.",
                 HttpStatus.NOT_FOUND, LocalDateTime.now().format(formatter));
     }
@@ -47,7 +51,7 @@ public class ErrorHandler {
         log.error("409 {}", e.getMessage(), e);
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        String stackTrace = sw.toString();
+        String stackTrace = isStackTrace ? sw.toString() : "Stack trace not allowed by property";
         return new ApiError(stackTrace, e.getMessage(), "Integrity constraint has been violated.",
                 HttpStatus.NOT_FOUND, LocalDateTime.now().format(formatter));
     }
