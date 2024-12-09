@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import ru.practicum.exceptions.DataAlreadyInUseException;
-import ru.practicum.exceptions.NotFoundException;
-import ru.practicum.exceptions.ValidationException;
+import ru.practicum.errors.exceptions.DataAlreadyInUseException;
+import ru.practicum.errors.exceptions.NotFoundException;
+import ru.practicum.errors.exceptions.ValidationException;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.mapper.UserMapper;
@@ -60,5 +60,11 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("User with id = " + userId + " not found.");
         }
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public User findById(long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException("User with id = " + userId + " not found."));
     }
 }

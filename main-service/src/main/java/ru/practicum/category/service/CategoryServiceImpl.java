@@ -9,9 +9,9 @@ import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.exceptions.DataAlreadyInUseException;
-import ru.practicum.exceptions.NotFoundException;
-import ru.practicum.exceptions.ValidationException;
+import ru.practicum.errors.exceptions.DataAlreadyInUseException;
+import ru.practicum.errors.exceptions.NotFoundException;
+import ru.practicum.errors.exceptions.ValidationException;
 
 import java.util.List;
 
@@ -45,8 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto updateCategory(long catId, NewCategoryDto categoryDto) {
         log.info("Starting update category with id = {}, name for update = {}.", catId, categoryDto.getName());
-        Category toUpdate = categoryRepository.findById(catId).orElseThrow(() ->
-                new NotFoundException("Category with id = " + catId + " not found."));
+        Category toUpdate = findById(catId);
         if (toUpdate.getName().equals(categoryDto.getName())) {
             return categoryMapper.toCategoryDto(toUpdate);
         }
@@ -68,10 +67,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getCategoryById(long catId) {
         log.info("Starting get category with id = {}", catId);
-        Category finded = categoryRepository.findById(catId).orElseThrow(() ->
-                new NotFoundException("Category with id = " + catId + " not found."));
+        Category finded = findById(catId);
         log.info("Category with id = {} was found.", catId);
         return categoryMapper.toCategoryDto(finded);
+    }
+
+    @Override
+    public Category findById(long catId) {
+        return categoryRepository.findById(catId).orElseThrow(() ->
+                new NotFoundException("Category with id = " + catId + " not found."));
     }
 
     private void checkExists(String name) {
