@@ -7,10 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.errors.exceptions.DataAlreadyInUseException;
-import ru.practicum.errors.exceptions.ForbiddenException;
-import ru.practicum.errors.exceptions.NotFoundException;
-import ru.practicum.errors.exceptions.ValidationException;
+import ru.practicum.errors.exceptions.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -77,8 +74,19 @@ public class ErrorHandler {
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
         String stackTrace = isStackTrace ? sw.toString() : "Stack trace not allowed by property";
-        return new ApiError(stackTrace, e.getMessage(), "For the requested operation the conditions are not met.",
+        return new ApiError(stackTrace, e.getMessage(), "Incorrectly made request.",
                 HttpStatus.FORBIDDEN, LocalDateTime.now().format(formatter));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleConditionsNotMet(final ConditionsNotMetException e) {
+        log.error("409 {}", e.getMessage(), e);
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        String stackTrace = isStackTrace ? sw.toString() : "Stack trace not allowed by property";
+        return new ApiError(stackTrace, e.getMessage(), "For the requested operation the conditions are not met.",
+                HttpStatus.CONFLICT, LocalDateTime.now().format(formatter));
     }
 
     @ExceptionHandler

@@ -24,8 +24,6 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     Category category;
-    @Column(name = "confirmed_requests")
-    int confirmedRequests;
     @Column(name = "created_on")
     LocalDateTime createdOn = LocalDateTime.now();
     @Column(name = "event_date")

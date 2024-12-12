@@ -9,9 +9,10 @@ import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.errors.exceptions.ConditionsNotMetException;
 import ru.practicum.errors.exceptions.DataAlreadyInUseException;
 import ru.practicum.errors.exceptions.NotFoundException;
-import ru.practicum.errors.exceptions.ValidationException;
+import ru.practicum.event.repository.EventRepository;
 
 import java.util.List;
 
@@ -21,13 +22,13 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final EventRepository eventRepository;
 
 
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
         log.info("Starting create category with name = {}.", newCategoryDto.getName());
         checkExists(newCategoryDto.getName());
-        checkLength(newCategoryDto.getName());
         Category newCategory = categoryMapper.toCategory(newCategoryDto);
         Category created = categoryRepository.save(newCategory);
         log.info("Category with id = {} created.", created.getId());
@@ -38,6 +39,9 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(long catId) {
         if (!categoryRepository.existsById(catId)) {
             throw new NotFoundException("Category with id = " + catId + " not found.");
+        }
+        if (eventRepository.existsByCategory_Id(catId)) {
+            throw new ConditionsNotMetException("The category with id = " + catId + " is not empty");
         }
         categoryRepository.deleteById(catId);
     }
@@ -50,7 +54,6 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryMapper.toCategoryDto(toUpdate);
         }
         checkExists(categoryDto.getName());
-        checkLength(categoryDto.getName());
         toUpdate.setName(categoryDto.getName());
         log.info("Category with id = {} updated", catId);
         return categoryMapper.toCategoryDto(toUpdate);
@@ -81,12 +84,6 @@ public class CategoryServiceImpl implements CategoryService {
     private void checkExists(String name) {
         if (categoryRepository.findByNameIgnoreCase(name.toLowerCase()) != null) {
             throw new DataAlreadyInUseException("Category with this name has already exist.");
-        }
-    }
-
-    private void checkLength(String name) {
-        if (name.length() > 50) {
-            throw new ValidationException("Length of category name > 50.");
         }
     }
 }

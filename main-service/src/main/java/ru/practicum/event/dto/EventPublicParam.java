@@ -1,26 +1,28 @@
 package ru.practicum.event.dto;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventPublicParam {
     String text;
     List<Long> categories;
-    boolean paid;
+    Boolean paid;
     LocalDateTime rangeStart;
     LocalDateTime rangeEnd;
-    boolean onlyAvailable;
+    Boolean onlyAvailable;
     EventSort sort;
-    Pageable pageable;
+    int from;
+    int size;
 
     public enum EventSort {
         EVENT_DATE,

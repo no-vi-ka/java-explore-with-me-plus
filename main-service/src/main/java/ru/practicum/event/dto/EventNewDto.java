@@ -33,7 +33,7 @@ public class EventNewDto {
     boolean paid;
     @PositiveOrZero(message = "Число участников должно быть больше или равно нулю")
     int participantLimit;
-    boolean requestModeration;
+    boolean requestModeration = true;
     @Size(max = 120, min = 3, message = "Длина заголовка должна быть от 3 до 120 символов")
     @NotBlank(message = "Нужно указать название")
     String title;

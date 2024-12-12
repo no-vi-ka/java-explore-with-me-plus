@@ -25,6 +25,8 @@ public interface EventMapper {
 
     List<EventShortDto> toEventShortDtoList(List<Event> events);
 
+    List<EventFullDto> toEventFullDtoList(List<Event> events);
+
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "state", ignore = true)
     @Mapping(target = "eventDate", ignore = true)
