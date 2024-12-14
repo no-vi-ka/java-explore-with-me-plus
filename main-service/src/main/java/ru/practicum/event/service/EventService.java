@@ -24,6 +24,4 @@ public interface EventService {
 
     EventFullDto getByIdPublic(long eventId, StatDto statDto);
 
-    Event findById(long eventId);
-
 }

@@ -61,12 +61,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventShortDto> getAllByUser(long userId, Pageable pageable) {
-        return eventMapper.toEventShortDtoList(eventRepository.findAllByInitiator_Id(userId, pageable));
+        List<Event> events = eventRepository.findAllByInitiator_Id(userId, pageable);
+        return eventMapper.toEventShortDtoList(events);
     }
 
     @Override
     public EventFullDto getByIdPrivate(long eventId, long userId) {
-        return eventMapper.toFullDto(findByIdAndInitiator(eventId, userId));
+        Event event = findByIdAndInitiator(eventId, userId);
+        return eventMapper.toFullDto(event);
     }
 
     @Override
@@ -111,28 +113,8 @@ public class EventServiceImpl implements EventService {
         EventAdminUpdateDto.StateAction stateAction = eventUpdate.getStateAction();
         if (stateAction != null) {
             switch (stateAction) {
-                case PUBLISH_EVENT -> {
-                    if (!event.getState().equals(EventState.PENDING)) {
-                        throw new ConditionsNotMetException("Нельзя опубликовать событие, не находящееся в состоянии ожидания");
-                    }
-                    event.setState(EventState.PUBLISHED);
-                    event.setPublishedOn(LocalDateTime.now());
-                    LocalDateTime eventDate = eventUpdate.getEventDate();
-                    if (eventDate != null) {
-                        if (eventDate.isBefore(event.getPublishedOn().plusHours(1))) {
-                            throw new ConditionsNotMetException(
-                                    "Начало события должно быть не ранее, чем через час от даты публикации: " + eventDate);
-                        }
-                        event.setEventDate(eventDate);
-                    }
-                }
-                case REJECT_EVENT -> {
-                    if (event.getState().equals(EventState.PENDING)) {
-                        event.setState(EventState.CANCELED);
-                    } else {
-                        throw new ConditionsNotMetException("Нельзя отклонить опубликованное событие");
-                    }
-                }
+                case PUBLISH_EVENT -> handlePublishEvent(event, eventUpdate);
+                case REJECT_EVENT -> handleRejectEvent(event);
             }
         }
 
@@ -211,7 +193,7 @@ public class EventServiceImpl implements EventService {
 
         List<EventShortDto> eventShorts = eventMapper.toEventShortDtoList(events);
 
-        return makeEventsWithViews(eventShorts);
+        return applyViewsToEvents(eventShorts);
     }
 
     @Override
@@ -234,8 +216,7 @@ public class EventServiceImpl implements EventService {
         return eventFullDto;
     }
 
-    @Override
-    public Event findById(long eventId) {
+    private Event findById(long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("Событие с id: " + eventId + " не существует"));
     }
@@ -256,7 +237,7 @@ public class EventServiceImpl implements EventService {
         return PageRequest.of(from, size, sort);
     }
 
-    private List<EventShortDto> makeEventsWithViews(List<EventShortDto> events) {
+    private List<EventShortDto> applyViewsToEvents(List<EventShortDto> events) {
         Map<String, EventShortDto> uriToEventMap = events.stream()
                 .collect(Collectors.toMap(
                         event -> UriComponentsBuilder.fromUriString("/events")
@@ -280,6 +261,29 @@ public class EventServiceImpl implements EventService {
         }
 
         return new ArrayList<>(uriToEventMap.values());
+    }
+
+    private void handlePublishEvent(Event event, EventAdminUpdateDto eventUpdate) {
+        if (!event.getState().equals(EventState.PENDING)) {
+            throw new ConditionsNotMetException("Нельзя опубликовать событие, не находящееся в состоянии ожидания");
+        }
+        event.setState(EventState.PUBLISHED);
+        event.setPublishedOn(LocalDateTime.now());
+        LocalDateTime eventDate = eventUpdate.getEventDate();
+        if (eventDate != null) {
+            if (eventDate.isBefore(event.getPublishedOn().plusHours(1))) {
+                throw new ConditionsNotMetException(
+                        "Начало события должно быть не ранее, чем через час от даты публикации: " + eventDate);
+            }
+            event.setEventDate(eventDate);
+        }
+    }
+
+    private void handleRejectEvent(Event event) {
+        if (!event.getState().equals(EventState.PENDING)) {
+            throw new ConditionsNotMetException("Нельзя отклонить опубликованное событие");
+        }
+        event.setState(EventState.CANCELED);
     }
 
 }
