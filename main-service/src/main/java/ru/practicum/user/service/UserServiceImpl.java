@@ -9,6 +9,7 @@ import ru.practicum.errors.exceptions.DataAlreadyInUseException;
 import ru.practicum.errors.exceptions.NotFoundException;
 import ru.practicum.errors.exceptions.ValidationException;
 import ru.practicum.user.dto.NewUserRequest;
+import ru.practicum.user.dto.UserAdminParam;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
@@ -25,14 +26,16 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public List<UserDto> getAllUsers(List<Long> ids, Integer from, Integer size) {
+    public List<UserDto> getAllUsers(UserAdminParam param) {
+        int from = param.getFrom();
+        int size = param.getSize();
         log.info("Starting get all users with params: from = {}, size = {}.", from, size);
-        if (CollectionUtils.isEmpty(ids)) {
+        if (CollectionUtils.isEmpty(param.getIds())) {
             return userRepository.findAll(PageRequest.of(from, size)).stream()
                     .map(userMapper::toUserDto)
                     .collect(Collectors.toList());
         }
-        List<User> users = userRepository.findAllByIdIn(ids, PageRequest.of(from, size));
+        List<User> users = userRepository.findAllByIdIn(param.getIds(), PageRequest.of(from, size));
         log.info("Got all users, count = {}.", users.size());
         return userMapper.toUserDtoList(users);
     }
