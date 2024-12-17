@@ -39,6 +39,16 @@ public class PrivateRequestController {
         return response;
     }
 
+    @PatchMapping("/requests/{requestId}/cancel")
+    @ResponseStatus(HttpStatus.OK)
+    public ParticipationRequestDto cancelParticipantRequest(@PathVariable(name = "userId") @Positive long userId,
+                                                                  @RequestParam(name = "requestId") @Positive long requestId) {
+        log.info("Пришел PATCH запрос /users/{}/requests/{}/cancel", userId, requestId);
+        var response = requestService.cancelParticipantRequest(userId, requestId);
+        log.info("Отправлен ответ PATCH /users/{}/requests/{}/cancel с содержимым: {}", userId, requestId, response);
+        return response;
+    }
+
     @GetMapping("/events/{eventId}/requests")
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getAllEventsOfInitiator(@PathVariable(name = "userId") @Positive long userId,

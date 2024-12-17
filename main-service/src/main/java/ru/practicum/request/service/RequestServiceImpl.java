@@ -103,4 +103,23 @@ public class RequestServiceImpl implements RequestService {
         // TODO смотреть api swagger
         return null;
     }
+
+    @Override
+    public ParticipationRequestDto cancelParticipantRequest(long userId, long requestId) {
+        Request request = requestRepository.findById(requestId).orElseThrow(
+                () -> new NotFoundException(String.format("Запрос на участие в событии с id запроса=%d не найден", requestId))
+        );
+
+        Long requesterId = request.getRequester().getId();
+        if (!requesterId.equals(userId)) {
+            throw new ConditionsNotMetException("Пользователь не является участником в запросе на участие в событии");
+        }
+
+        if (!request.getStatus().equals(RequestStatus.PENDING)) {
+            request.setStatus(RequestStatus.PENDING);
+            requestRepository.save(request);
+        }
+
+        return requestMapper.toDto(request);
+    }
 }
