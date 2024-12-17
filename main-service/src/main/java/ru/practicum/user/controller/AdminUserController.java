@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.user.dto.NewUserRequest;
+import ru.practicum.user.dto.UserAdminParam;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.service.UserService;
 
@@ -27,7 +28,11 @@ public class AdminUserController {
                                      @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
                                      @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         log.info("Get all users with params: from = {}, size = {}.", from, size);
-        return userService.getAllUsers(ids, from, size);
+        UserAdminParam params = new UserAdminParam();
+        params.setFrom(from);
+        params.setSize(size);
+        params.setIds(ids);
+        return userService.getAllUsers(params);
     }
 
     @PostMapping
