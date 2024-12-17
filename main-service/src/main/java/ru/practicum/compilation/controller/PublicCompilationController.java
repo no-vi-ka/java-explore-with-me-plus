@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilation.dto.CompilationDto;
+import ru.practicum.compilation.dto.CompilationParam;
 import ru.practicum.compilation.service.CompilationService;
 
 import java.util.List;
@@ -24,8 +25,11 @@ public class PublicCompilationController {
             @RequestParam(required = false, defaultValue = "0") Integer from,
             @Positive @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("Get all compilations with params: from = {}, size = {}.", from, size);
-        return ResponseEntity.status(HttpStatus.OK).body(compilationService.getAllCompilations(
-                Boolean.valueOf(pinned), from, size));
+        CompilationParam param = new CompilationParam();
+        param.setIsPinned(Boolean.valueOf(pinned));
+        param.setFrom(from);
+        param.setSize(size);
+        return ResponseEntity.status(HttpStatus.OK).body(compilationService.getAllCompilations(param));
     }
 
     @GetMapping("/{compId}")

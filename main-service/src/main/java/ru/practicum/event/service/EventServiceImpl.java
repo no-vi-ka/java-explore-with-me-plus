@@ -216,11 +216,6 @@ public class EventServiceImpl implements EventService {
         return eventFullDto;
     }
 
-    @Override
-    public List<Event> findAllByIdIn(List<Long> events) {
-        return eventRepository.findAllByIdIn(events);
-    }
-
     private Event findById(long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("Событие с id: " + eventId + " не существует"));
