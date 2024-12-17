@@ -6,4 +6,4 @@ CREATE TABLE IF NOT EXISTS stats (
     ip  VARCHAR(15)  NOT NULL,
     time_stamp TIMESTAMP NOT NULL,
     CONSTRAINT pk_stats PRIMARY KEY (id)
-    );
+);
