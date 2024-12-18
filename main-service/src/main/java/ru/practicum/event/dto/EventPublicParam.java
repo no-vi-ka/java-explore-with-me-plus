@@ -25,7 +25,17 @@ public class EventPublicParam {
     int size;
 
     public enum EventSort {
-        EVENT_DATE,
-        VIEWS
+        EVENT_DATE("eventDate"),
+        VIEWS("views");
+
+        private final String field;
+
+        EventSort(String field) {
+            this.field = field;
+        }
+
+        public String getField() {
+            return field;
+        }
     }
 }

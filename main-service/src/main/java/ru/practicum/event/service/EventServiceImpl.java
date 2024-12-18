@@ -82,7 +82,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto updatePrivate(long userId, long eventId, EventUserUpdateDto eventUpdate) {
         Event event = findByIdAndInitiator(eventId, userId);
 
-        if (event.getState().equals(EventState.PUBLISHED)) {
+        if (event.getState() == EventState.PUBLISHED) {
             throw new ConditionsNotMetException("Нельзя обновить опубликованное событие");
         }
 
@@ -239,13 +239,9 @@ public class EventServiceImpl implements EventService {
     }
 
     private Pageable toPageable(EventPublicParam.EventSort eventSort, int from, int size) {
-        if (eventSort == null) {
-            eventSort = EventPublicParam.EventSort.EVENT_DATE;
-        }
-        Sort sort = switch (eventSort) {
-            case EVENT_DATE -> Sort.by(Sort.Direction.DESC, "eventDate");
-            case VIEWS -> Sort.by(Sort.Direction.DESC, "views");
-        };
+        Sort sort =  eventSort.getField() == null ?
+                Sort.by(EventPublicParam.EventSort.EVENT_DATE.getField())
+                : Sort.by(Sort.Direction.DESC, eventSort.getField());
         return PageRequest.of(from, size, sort);
     }
 

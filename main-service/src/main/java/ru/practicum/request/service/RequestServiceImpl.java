@@ -40,7 +40,7 @@ public class RequestServiceImpl implements RequestService {
                 () -> new NotFoundException(String.format("Событие с id=%d не найдено", eventId))
         );
 
-        if (!event.getState().equals(EventState.PUBLISHED)) {
+        if (event.getState() != EventState.PUBLISHED) {
             throw new ConditionsNotMetException("Нельзя участвовать в неопубликованном событии");
         }
 
