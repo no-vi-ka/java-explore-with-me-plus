@@ -69,7 +69,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public List<CompilationDto> getAllCompilations(CompilationParam param){
+    public List<CompilationDto> getAllCompilations(CompilationParam param) {
         Boolean isPinned = param.getIsPinned();
         int from = param.getFrom();
         int size = param.getSize();

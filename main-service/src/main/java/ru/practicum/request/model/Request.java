@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.EventState;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
@@ -23,6 +22,7 @@ public class Request {
     Long id;
 
     @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     RequestStatus status;
 
     @Column(name = "created", nullable = false)

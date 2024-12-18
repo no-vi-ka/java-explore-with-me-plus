@@ -48,6 +48,8 @@ public class Event {
     EventState state = EventState.PENDING;
     @Column(name = "title")
     String title;
+    @Transient
+    int confirmedRequests;
 
     @Override
     public boolean equals(Object o) {

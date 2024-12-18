@@ -1,6 +1,5 @@
 package ru.practicum.request.service;
 
-import jakarta.validation.Valid;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.ParticipationRequestDto;

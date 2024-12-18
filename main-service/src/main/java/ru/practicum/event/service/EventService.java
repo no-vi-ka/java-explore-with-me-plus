@@ -3,7 +3,6 @@ package ru.practicum.event.service;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.StatDto;
 import ru.practicum.event.dto.*;
-import ru.practicum.event.model.Event;
 
 import java.util.List;
 

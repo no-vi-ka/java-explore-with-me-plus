@@ -25,11 +25,15 @@ import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
 import ru.practicum.event.model.QEvent;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.request.model.Request;
+import ru.practicum.request.model.RequestStatus;
+import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.model.User;
 import ru.practicum.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -45,6 +49,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryService categoryService;
     private final EventMapper eventMapper;
     private final StatsClient statsClient;
+    private final RequestRepository requestRepository;
 
     @Override
     public EventFullDto add(EventNewDto newEvent, long userId) {
@@ -62,12 +67,14 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> getAllByUser(long userId, Pageable pageable) {
         List<Event> events = eventRepository.findAllByInitiator_Id(userId, pageable);
+        events = applyConfirmedRequestsToEvents(events);
         return eventMapper.toEventShortDtoList(events);
     }
 
     @Override
     public EventFullDto getByIdPrivate(long eventId, long userId) {
         Event event = findByIdAndInitiator(eventId, userId);
+        applyConfirmedRequestsToEvent(event);
         return eventMapper.toFullDto(event);
     }
 
@@ -152,6 +159,8 @@ public class EventServiceImpl implements EventService {
                 ? eventRepository.findAll(predicate, params.getPageable()).toList()
                 : eventRepository.findAll(params.getPageable()).toList();
 
+        events = applyConfirmedRequestsToEvents(events);
+
         return eventMapper.toEventFullDtoList(events);
     }
 
@@ -179,10 +188,6 @@ public class EventServiceImpl implements EventService {
         Boolean paid = params.getPaid();
         BooleanExpression byPaid = (paid != null) ? QEvent.event.paid.eq(paid) : null;
 
-        /*Boolean onlyAvailable = params.getOnlyAvailable();
-        BooleanExpression byParticipantLimit = (onlyAvailable != null && onlyAvailable == true) ?
-                QEvent.event.participantLimit.gt(confirmedRequests) : null*/
-
         Predicate predicate = ExpressionUtils.allOf(byState, byText, byPaid, byCategories, byEventDate);
 
         Pageable pageable = toPageable(params.getSort(), params.getFrom(), params.getSize());
@@ -190,6 +195,12 @@ public class EventServiceImpl implements EventService {
         List<Event> events = (predicate != null)
                 ? eventRepository.findAll(predicate, pageable).toList()
                 : eventRepository.findAll(pageable).toList();
+
+        events = applyConfirmedRequestsToEvents(events);
+
+        if (params.getOnlyAvailable() != null && params.getOnlyAvailable()) {
+            events = filterByAvailability(events);
+        }
 
         List<EventShortDto> eventShorts = eventMapper.toEventShortDtoList(events);
 
@@ -202,6 +213,7 @@ public class EventServiceImpl implements EventService {
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new NotFoundException("Событие с id: " + eventId + " не найдено");
         }
+        applyConfirmedRequestsToEvent(event);
 
         EventFullDto eventFullDto = eventMapper.toFullDto(event);
         List<ResponseStatDto> stats = statsClient.getStats(LocalDateTime.now().minusMonths(1), LocalDateTime.now(),
@@ -286,4 +298,26 @@ public class EventServiceImpl implements EventService {
         event.setState(EventState.CANCELED);
     }
 
+    private List<Event> applyConfirmedRequestsToEvents(List<Event> events) {
+        List<Long> eventsIds = events.stream().map(Event::getId).toList();
+        Map<Long, List<Request>> requestsByEventIds = requestRepository
+                .findAllByEvent_IdInAndStatusEquals(eventsIds, RequestStatus.CONFIRMED).stream()
+                .collect(Collectors.groupingBy(request -> request.getEvent().getId()));
+
+        return events.stream().peek(event -> {
+            List<Request> confirmedRequests = requestsByEventIds.getOrDefault(event.getId(), Collections.emptyList());
+            event.setConfirmedRequests(confirmedRequests.size());
+        }).collect(Collectors.toList());
+    }
+
+    private void applyConfirmedRequestsToEvent(Event event) {
+        int confirmed = requestRepository.findCountOfConfirmedRequestsByEventId(event.getId());
+        event.setConfirmedRequests(confirmed);
+    }
+
+    private List<Event> filterByAvailability(List<Event> events) {
+        return events.stream()
+                .filter(event -> event.getConfirmedRequests() < event.getParticipantLimit())
+                .collect(Collectors.toList());
+    }
 }
