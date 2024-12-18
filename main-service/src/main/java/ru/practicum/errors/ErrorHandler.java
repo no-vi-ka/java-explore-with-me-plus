@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -87,6 +88,17 @@ public class ErrorHandler {
         String stackTrace = isStackTrace ? sw.toString() : "Stack trace not allowed by property";
         return new ApiError(stackTrace, e.getMessage(), "For the requested operation the conditions are not met.",
                 HttpStatus.CONFLICT, LocalDateTime.now().format(formatter));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMissingServletRequestParameter(final MissingServletRequestParameterException e) {
+        log.error("400 {}", e.getMessage(), e);
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        String stackTrace = isStackTrace ? sw.toString() : "Stack trace not allowed by property";
+        return new ApiError(stackTrace, e.getMessage(),
+                "Incorrectly made request.", HttpStatus.BAD_REQUEST, LocalDateTime.now().format(formatter));
     }
 
     @ExceptionHandler
