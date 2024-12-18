@@ -68,7 +68,7 @@ public class CompilationServiceImpl implements CompilationService {
         return toReturn;
     }
 
-    public List<CompilationDto> getAllCompilations(CompilationParam param){
+    public List<CompilationDto> getAllCompilations(CompilationParam param) {
         Boolean isPinned = param.getIsPinned();
         int from = param.getFrom();
         int size = param.getSize();
