@@ -239,7 +239,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private Pageable toPageable(EventPublicParam.EventSort eventSort, int from, int size) {
-        Sort sort =  eventSort.getField() == null ?
+        Sort sort =  eventSort == null ?
                 Sort.by(EventPublicParam.EventSort.EVENT_DATE.getField())
                 : Sort.by(Sort.Direction.DESC, eventSort.getField());
         return PageRequest.of(from, size, sort);
