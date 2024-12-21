@@ -11,6 +11,8 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RatingMapper {
     Rating toRating(NewRatingDto newRatingDto);
+
     List<RatingDto> toRatingDtoList(List<Rating> ratings);
+
     RatingDto toRatingDto(Rating rating);
 }
