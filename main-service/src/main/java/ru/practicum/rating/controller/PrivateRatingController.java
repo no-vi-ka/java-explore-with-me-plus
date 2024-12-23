@@ -43,12 +43,12 @@ public class PrivateRatingController {
     }
 
     //изменить лайк
-    @PatchMapping
+    @PatchMapping("/{ratingId}")
     @ResponseStatus(HttpStatus.OK)
-    public RatingDto updateRatingMark(@PathVariable("userId") long userId,
-                                     @RequestBody @Valid UpdateRatingDto updateRatingDto) {
+    public RatingDto updateRatingMark(@PathVariable("userId") long userId, @PathVariable("ratingId") long ratingId,
+                                      @RequestBody @Valid UpdateRatingDto updateRatingDto) {
         log.info("Update like/dislike: {} from user with id = {}.", updateRatingDto, userId);
-        return ratingService.updateRatingMark(userId, updateRatingDto);
+        return ratingService.updateRatingMark(userId, ratingId, updateRatingDto);
     }
 
     //удалить лайк
