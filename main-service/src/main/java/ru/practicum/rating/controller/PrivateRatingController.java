@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.rating.dto.NewRatingDto;
-import ru.practicum.rating.dto.RatingDto;
-import ru.practicum.rating.dto.RatingParam;
-import ru.practicum.rating.dto.UpdateRatingDto;
+import ru.practicum.rating.dto.*;
 import ru.practicum.rating.service.RatingService;
 
 import java.util.List;
@@ -48,7 +45,10 @@ public class PrivateRatingController {
     public RatingDto updateRatingMark(@PathVariable("userId") long userId, @PathVariable("ratingId") long ratingId,
                                       @RequestBody @Valid UpdateRatingDto updateRatingDto) {
         log.info("Update like/dislike: {} from user with id = {}.", updateRatingDto, userId);
-        return ratingService.updateRatingMark(userId, ratingId, updateRatingDto);
+        UpdateRatingParam updateRatingParam = new UpdateRatingParam();
+        updateRatingParam.setRatingId(ratingId);
+        updateRatingParam.setUpdateRatingDto(updateRatingDto);
+        return ratingService.updateRatingMark(userId, updateRatingParam);
     }
 
     //удалить лайк

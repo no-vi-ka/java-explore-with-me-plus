@@ -8,10 +8,7 @@ import ru.practicum.errors.exceptions.ConditionsNotMetException;
 import ru.practicum.errors.exceptions.NotFoundException;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.rating.dto.NewRatingDto;
-import ru.practicum.rating.dto.RatingDto;
-import ru.practicum.rating.dto.RatingParam;
-import ru.practicum.rating.dto.UpdateRatingDto;
+import ru.practicum.rating.dto.*;
 import ru.practicum.rating.mapper.RatingMapper;
 import ru.practicum.rating.model.Rating;
 import ru.practicum.rating.repository.RatingRepository;
@@ -54,16 +51,16 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public RatingDto updateRatingMark(long userId, long ratingId, UpdateRatingDto updateRatingDto) {
-        Rating ratingMark = ratingRepository.findById(ratingId).orElseThrow(() ->
-                new NotFoundException("Rating mark with id = " + ratingId + " not found."));
+    public RatingDto updateRatingMark(long userId, UpdateRatingParam updateRatingParam) {
+        Rating ratingMark = ratingRepository.findById(updateRatingParam.getRatingId()).orElseThrow(() ->
+                new NotFoundException("Rating mark with id = " + updateRatingParam.getRatingId() + " not found."));
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with id = " + userId + " not found.");
         }
-        if (userId != updateRatingDto.getUserId()) {
+        if (userId != updateRatingParam.getUpdateRatingDto().getUserId()) {
             throw new ConditionsNotMetException("User with id = " + userId + " is not author of mark.");
         }
-        ratingMark.setMark(updateRatingDto.getStatus());
+        ratingMark.setMark(updateRatingParam.getUpdateRatingDto().getStatus());
         log.info("Rating mark: {} updated.", ratingMark);
         return ratingMapper.toRatingDto(ratingMark);
     }
