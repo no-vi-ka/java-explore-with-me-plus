@@ -1,16 +1,16 @@
 {
 	"info": {
-		"_postman_id": "98e64a66-34d5-4f8b-9c37-0a85fbe85937",
+		"_postman_id": "e90bac07-aba4-435a-8b14-65b99d8f972a",
 		"name": "feature",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "35381516"
+		"_exporter_id": "36636070"
 	},
 	"item": [
 		{
 			"name": "Delete method",
 			"item": [
 				{
-					"name": "code 204",
+					"name": "Удаление отметки",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -25,9 +25,10 @@
 									"        const category = await api.addCategory(rnd.getCategory());\r",
 									"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 									"        event = await api.publishEvent(event.id);       \r",
-									"        const rating = await api.addRating(user.id, rnd.getRating(event.id));\r",
+									"        const rating = await api.addRating(user.id, event.id, rnd.getRating(event.id));\r",
 									"        pm.collectionVariables.set('userId', user.id);\r",
 									"        pm.collectionVariables.set('ratingId', rating.id);\r",
+									"        pm.collectionVariables.set('eventId', event.id);\r",
 									"    } catch(err) {\r",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 									"    }\r",
@@ -70,32 +71,24 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/users/:userId/ratings/:ratingId",
+							"raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/ratings/{{ratingId}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"users",
-								":userId",
+								"{{userId}}",
+								"events",
+								"{{eventId}}",
 								"ratings",
-								":ratingId"
-							],
-							"variable": [
-								{
-									"key": "userId",
-									"value": "{{userId}}"
-								},
-								{
-									"key": "ratingId",
-									"value": "{{ratingId}}"
-								}
+								"{{ratingId}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "code 404",
+					"name": "Удаление отметки у несуществующего отзыва",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -107,8 +100,10 @@
 									"\r",
 									"    try {\r",
 									"        const user = await api.addUser(rnd.getUser());       \r",
-									"        pm.collectionVariables.set('uid', user.id);\r",
+									"        pm.collectionVariables.set('userId', user.id);\r",
+									"        pm.collectionVariables.set('eventId', event.id);\r",
 									"        pm.collectionVariables.set('ratingId', 666);\r",
+									"\r",
 									"    } catch(err) {\r",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 									"    }\r",
@@ -151,32 +146,24 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/users/:userId/ratings/:ratingId",
+							"raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/ratings/{{ratingId}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"users",
-								":userId",
+								"{{userId}}",
+								"events",
+								"{{eventId}}",
 								"ratings",
-								":ratingId"
-							],
-							"variable": [
-								{
-									"key": "userId",
-									"value": "{{userId}}"
-								},
-								{
-									"key": "ratingId",
-									"value": "{{ratingId}}"
-								}
+								"{{ratingId}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "code 409",
+					"name": "Удаление отзыва НЕ автором",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -192,9 +179,10 @@
 									"        const category = await api.addCategory(rnd.getCategory());\r",
 									"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 									"        event = await api.publishEvent(event.id);       \r",
-									"        const rating = await api.addRating(user.id, rnd.getRating(event.id));\r",
+									"        const rating = await api.addRating(user.id, event.id, rnd.getRating(event.id));\r",
 									"        pm.collectionVariables.set('userId', otherUser.id);\r",
 									"        pm.collectionVariables.set('ratingId', rating.id);\r",
+									"        pm.collectionVariables.set('eventId', event.id);\r",
 									"    } catch(err) {\r",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 									"    }\r",
@@ -237,37 +225,24 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/users/:userId/ratings/:ratingId",
+							"raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/ratings/{{ratingId}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"users",
-								":userId",
+								"{{userId}}",
+								"events",
+								"{{eventId}}",
 								"ratings",
-								":ratingId"
-							],
-							"variable": [
-								{
-									"key": "userId",
-									"value": "{{userId}}"
-								},
-								{
-									"key": "ratingId",
-									"value": "{{ratingId}}"
-								}
+								"{{ratingId}}"
 							]
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "add-rating",
-			"item": [
+				},
 				{
-					"name": "add rating",
+					"name": "Удаление отзыва у несуществующего события",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -277,30 +252,26 @@
 									"    const api = new API(pm);\r",
 									"    const rnd = new RandomUtils();\r",
 									"\r",
-									"    let rating;\r",
 									"    try {\r",
 									"        const user = await api.addUser(rnd.getUser());\r",
 									"        const category = await api.addCategory(rnd.getCategory());\r",
 									"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
-									"        event = await api.publishEvent(event.id); \r",
-									"        rating = rnd.getRating(event.id);\r",
+									"        event = await api.publishEvent(event.id);       \r",
+									"        const rating = await api.addRating(user.id, event.id, rnd.getRating(event.id));\r",
 									"        pm.collectionVariables.set('userId', user.id);\r",
+									"        pm.collectionVariables.set('ratingId', rating.id);\r",
+									"        pm.collectionVariables.set('eventId', 666);\r",
 									"    } catch(err) {\r",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 									"    }\r",
-									"    pm.request.body.update({\r",
-									"        mode: 'raw',\r",
-									"        raw: JSON.stringify(rating),\r",
-									"        options: { raw: { language: 'json' } }\r",
-									"    });\r",
 									"};\r",
 									"\r",
 									"const interval = setInterval(() => {}, 1000);\r",
 									"\r",
-									"\r",
 									"setTimeout(async () => \r",
 									"    {\r",
 									"        try {\r",
+									"            // выполняем наш скрипт\r",
 									"            await main();\r",
 									"        } catch (e) {\r",
 									"            console.error(e);\r",
@@ -319,26 +290,109 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"    pm.response.to.be.withBody;\r",
-									"    pm.response.to.be.json;\r",
-									"});\r",
-									"\r",
-									"const source = JSON.parse(pm.request.body.raw);\r",
-									"const target = pm.response.json(); \r",
-									"\r",
-									"pm.test(\"Рейтинг должен содержать поля: id, eventId, userId, mark\", function () {\r",
-									"    pm.expect(target).to.have.property('id');\r",
-									"    pm.expect(target).to.have.property('userId');\r",
-									"    pm.expect(target).to.have.property('eventId');\r",
-									"    pm.expect(target).to.have.property('mark');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
-									"    pm.expect(target.id).to.not.be.null;\r",
-									"    pm.expect(source.eventId).equal(target.eventId, 'ID события должен совпадать с отправленным');\r",
-									"    pm.expect(source.mark).equal(target.mark, 'Оценка должна совпадать с отправленной');\r",
+									"pm.test(\"Ответ должен содержать код статуса 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/ratings/{{ratingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"events",
+								"{{eventId}}",
+								"ratings",
+								"{{ratingId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Add rating mark",
+			"item": [
+				{
+					"name": "Добавление отметки событию",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const user = await api.addUser(rnd.getUser());",
+									"        const otherUser = await api.addUser(rnd.getUser());",
+									"",
+									"        const category = await api.addCategory(rnd.getCategory());",
+									"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));",
+									"        event = await api.publishEvent(event.id);       ",
+									"",
+									"        pm.collectionVariables.set('userId', otherUser.id);",
+									"        pm.collectionVariables.set('eventId', event.id);",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            // выполняем наш скрипт",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const source = JSON.parse(pm.request.body.raw);",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Rating должен содержать поля: id, userId, eventId, mark\", function () {",
+									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('userId');",
+									"pm.expect(target).to.have.property('eventId');",
+									"pm.expect(target).to.have.property('mark');",
+									"});",
+									"",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
+									"    pm.expect(target.id).to.not.be.null;",
+									"    pm.expect(source.mark).equal(target.mark, 'Оценка должна совпадать с отправленной');",
 									"});"
 								],
 								"type": "text/javascript",
@@ -351,7 +405,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{{request_body}}",
+							"raw": "{\n    \"mark\" : \"LIKE\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -359,14 +413,408 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/users/{{userId}}/ratings",
+							"raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/ratings",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"users",
 								"{{userId}}",
+								"events",
+								"{{eventId}}",
 								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление оценки от несуществующего пользователя",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const user = await api.addUser(rnd.getUser());",
+									"",
+									"        const category = await api.addCategory(rnd.getCategory());",
+									"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));",
+									"        event = await api.publishEvent(event.id);       ",
+									"",
+									"        pm.collectionVariables.set('userId', 999);",
+									"        pm.collectionVariables.set('eventId', event.id);",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            // выполняем наш скрипт",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате JSON\", function () {",
+									"    pm.response.to.have.status(404);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mark\" : \"LIKE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/ratings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"events",
+								"{{eventId}}",
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Поле mark пропущено",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const user = await api.addUser(rnd.getUser());",
+									"        const otherUser = await api.addUser(rnd.getUser());",
+									"",
+									"        const category = await api.addCategory(rnd.getCategory());",
+									"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));",
+									"        event = await api.publishEvent(event.id);       ",
+									"",
+									"        pm.collectionVariables.set('userId', otherUser.id);",
+									"        pm.collectionVariables.set('eventId', event.id);",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            // выполняем наш скрипт",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате JSON\", function () {",
+									"    pm.response.to.have.status(400);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mark\" : null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/ratings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"events",
+								"{{eventId}}",
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление оценки к несуществующему событию",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const user = await api.addUser(rnd.getUser());",
+									"        const otherUser = await api.addUser(rnd.getUser());",
+									"",
+									"        const category = await api.addCategory(rnd.getCategory());",
+									"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));",
+									"        event = await api.publishEvent(event.id);       ",
+									"",
+									"        pm.collectionVariables.set('userId', otherUser.id);",
+									"        pm.collectionVariables.set('eventId', 666);",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            // выполняем наш скрипт",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате JSON\", function () {",
+									"    pm.response.to.have.status(404);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mark\" : \"LIKE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/ratings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"events",
+								"{{eventId}}",
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search most liked",
+			"item": [
+				{
+					"name": "Получение самых залайканных событий с отзывами",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const initiator = await api.addUser(rnd.getUser());",
+									"        const participant1 = await api.addUser(rnd.getUser());",
+									"        const participant2 = await api.addUser(rnd.getUser());",
+									"        const participant3 = await api.addUser(rnd.getUser());",
+									"",
+									"",
+									"        const category = await api.addCategory(rnd.getCategory());",
+									"        let event1 = await api.addEvent(initiator.id, rnd.getEvent(category.id));",
+									"        event1 = await api.publishEvent(event1.id);",
+									"",
+									"        let event2 = await api.addEvent(initiator.id, rnd.getEvent(category.id));",
+									"        event2 = await api.publishEvent(event2.id);",
+									"",
+									"        let event3 = await api.addEvent(initiator.id, rnd.getEvent(category.id));",
+									"        event3 = await api.publishEvent(event3.id);",
+									"",
+									"        await api.addRating(participant1.id, event1.id, rnd.getRating(event1.id));",
+									"        await api.addRating(participant2.id, event1.id, rnd.getRating(event1.id));",
+									"        await api.addRating(participant3.id, event1.id, rnd.getRating(event1.id));   ",
+									"",
+									"        await api.addRating(participant1.id, event2.id, rnd.getRating(event2.id));",
+									"        await api.addRating(participant3.id, event2.id, rnd.getRating(event2.id));",
+									"",
+									"        await api.addRating(participant3.id, event3.id, rnd.getRating(event3.id));",
+									"             ",
+									"",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            // выполняем наш скрипт",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате JSON\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать ровно 3 объекта\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an(\"array\").with.length(3);",
+									"});",
+									"",
+									"pm.test(\"Каждый объект должен содержать ключи id, annotation, category, confirmedRequests, eventDate, initiator, paid, title, views\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    jsonData.forEach((obj) => {",
+									"        pm.expect(obj).to.have.property(\"id\");",
+									"        pm.expect(obj).to.have.property(\"annotation\");",
+									"        pm.expect(obj).to.have.property(\"category\");",
+									"        pm.expect(obj).to.have.property(\"confirmedRequests\");",
+									"        pm.expect(obj).to.have.property(\"eventDate\");",
+									"        pm.expect(obj).to.have.property(\"initiator\");",
+									"        pm.expect(obj).to.have.property(\"paid\");",
+									"        pm.expect(obj).to.have.property(\"title\");",
+									"        pm.expect(obj).to.have.property(\"views\");",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/top-liked?limit=3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"events",
+								"top-liked"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "3"
+								}
 							]
 						}
 					},
@@ -400,9 +848,11 @@
 					"        return this.post(\"/users/\" + userId + \"/events\", event, \"Ошибка при добавлении нового события: \", verbose);",
 					"    }",
 					"    ",
-					"    async addRating(userId, rating, verbose=null) {",
-					"        return this.post(\"/users/\" + userId + \"/ratings\", rating, \"Ошибка при добавлении нового события: \", verbose);",
+					"    async addRating(userId, eventId, rating, verbose=null) {",
+					"        return this.post(\"/users/\" + userId + \"/events/\" + eventId + \"/ratings\", rating, \"Ошибка при добавлении нового события: \", verbose);",
 					"    }",
+					"",
+					"    ",
 					"",
 					"    async addCompilation(compilation, verbose=null) {",
 					"        return this.post(\"/admin/compilations\", compilation, \"Ошибка при добавлении новой подборки: \", verbose);",
@@ -434,10 +884,6 @@
 					"",
 					"    async findEvent(eventId, verbose=null) {",
 					"        return this.get('/events/' + eventId, null, \"Ошибка при поиске события по id\", verbose);",
-					"    }",
-					"",
-					"    async findRating(userId, ratingId, verbose=null) {",
-					"        return this.get('/users/' + userId + '/ratings/' + ratingId, null, \"Ошибка при поиске события по id\", verbose);",
 					"    }",
 					"",
 					"    async findUser(userId, verbose=null) {",
@@ -514,13 +960,9 @@
 					"        };",
 					"    }",
 					"",
-					"    getRating(eventId) {",
-					"        const randomValue = Math.random();",
-					"        console.log(\"Random value generated:\",randomValue);",
-					"        const randomMark = randomValue < 0.5 ? 'LIKE' : 'DISLIKE';",
+					"    getRating() {",
 					"        return {",
-					"            eventId: eventId,",
-					"            mark: randomMark",
+					"            mark: 'LIKE'",
 					"        }",
 					"    }",
 					"",

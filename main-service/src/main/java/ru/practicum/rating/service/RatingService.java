@@ -1,15 +1,13 @@
 package ru.practicum.rating.service;
 
-import ru.practicum.rating.dto.*;
-
-import java.util.List;
+import ru.practicum.rating.dto.NewRatingDto;
+import ru.practicum.rating.dto.RatingDto;
+import ru.practicum.rating.dto.UpdateRatingDto;
 
 public interface RatingService {
-    List<RatingDto> getAllMarksByUserId(long userId, RatingParam ratingParam);
+    RatingDto create(long userId, long eventId, NewRatingDto newRatingDto);
 
-    RatingDto addRatingMark(long userId, NewRatingDto newRatingDto);
+    RatingDto update(long userId, long eventId, long ratingId, UpdateRatingDto updateRatingDto);
 
-    RatingDto updateRatingMark(long userId, UpdateRatingParam updateRatingParam);
-
-    void removeRatingMark(long userId, long ratingId);
+    void delete(long userId, long eventId, long ratingId);
 }

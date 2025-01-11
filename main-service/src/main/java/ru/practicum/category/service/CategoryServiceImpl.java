@@ -1,6 +1,8 @@
 package ru.practicum.category.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -19,11 +21,11 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryServiceImpl implements CategoryService {
-    private final CategoryRepository categoryRepository;
-    private final CategoryMapper categoryMapper;
-    private final EventRepository eventRepository;
-
+    CategoryRepository categoryRepository;
+    CategoryMapper categoryMapper;
+    EventRepository eventRepository;
 
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
@@ -31,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
         checkExists(newCategoryDto.getName());
         Category newCategory = categoryMapper.toCategory(newCategoryDto);
         Category created = categoryRepository.save(newCategory);
-        log.info("Category with id = {} created.", created.getId());
+        log.info("Category {} with id = {} created", created.getName(), created.getId());
         return categoryMapper.toCategoryDto(created);
     }
 

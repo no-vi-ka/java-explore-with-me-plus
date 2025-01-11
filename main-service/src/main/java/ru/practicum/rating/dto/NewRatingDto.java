@@ -12,8 +12,6 @@ import ru.practicum.rating.mark.Mark;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NewRatingDto {
-    @NotNull(message = "Поле event должно быть указано.")
-    Long eventId;
     @NotNull(message = "Поле mark должно быть указано.")
     Mark mark;
 }

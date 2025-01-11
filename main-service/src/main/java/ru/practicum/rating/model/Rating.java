@@ -14,6 +14,7 @@ import ru.practicum.user.model.User;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Rating {
     @Id
@@ -21,9 +22,11 @@ public class Rating {
     Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @ToString.Exclude
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
+    @ToString.Exclude
     private Event event;
     @Column(name = "mark")
     @Enumerated(value = EnumType.STRING)
