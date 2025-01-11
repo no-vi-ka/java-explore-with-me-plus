@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "e00717a6-3641-4e66-90c7-118260372d84",
+		"_postman_id": "98e64a66-34d5-4f8b-9c37-0a85fbe85937",
 		"name": "feature",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "36832432"
+		"_exporter_id": "35381516"
 	},
 	"item": [
 		{
@@ -262,6 +262,118 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "add-rating",
+			"item": [
+				{
+					"name": "add rating",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let rating;\r",
+									"    try {\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+									"        event = await api.publishEvent(event.id); \r",
+									"        rating = rnd.getRating(event.id);\r",
+									"        pm.collectionVariables.set('userId', user.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"    pm.request.body.update({\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify(rating),\r",
+									"        options: { raw: { language: 'json' } }\r",
+									"    });\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const source = JSON.parse(pm.request.body.raw);\r",
+									"const target = pm.response.json(); \r",
+									"\r",
+									"pm.test(\"Рейтинг должен содержать поля: id, eventId, userId, mark\", function () {\r",
+									"    pm.expect(target).to.have.property('id');\r",
+									"    pm.expect(target).to.have.property('userId');\r",
+									"    pm.expect(target).to.have.property('eventId');\r",
+									"    pm.expect(target).to.have.property('mark');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).to.not.be.null;\r",
+									"    pm.expect(pm.collectionVariables.get(\"userId\")).equal(target.userId, 'ID пользователя должен совпадать с отправленным');\r",
+									"    pm.expect(source.eventId).equal(target.eventId, 'ID события должен совпадать с отправленным');\r",
+									"    pm.expect(source.mark).equal(target.mark, 'Оценка должна совпадать с отправленной');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}/ratings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -404,9 +516,12 @@
 					"    }",
 					"",
 					"    getRating(eventId) {",
+					"        const randomValue = Math.random();",
+					"        console.log(\"Random value generated:\",randomValue);",
+					"        const randomMark = randomValue < 0.5 ? 'LIKE' : 'DISLIKE';",
 					"        return {",
 					"            eventId: eventId,",
-					"            mark: 'LIKE'",
+					"            mark: randomMark",
 					"        }",
 					"    }",
 					"",
