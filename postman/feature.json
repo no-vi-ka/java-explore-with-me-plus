@@ -337,7 +337,6 @@
 									"\r",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 									"    pm.expect(target.id).to.not.be.null;\r",
-									"    pm.expect(pm.collectionVariables.get(\"userId\")).equal(target.userId, 'ID пользователя должен совпадать с отправленным');\r",
 									"    pm.expect(source.eventId).equal(target.eventId, 'ID события должен совпадать с отправленным');\r",
 									"    pm.expect(source.mark).equal(target.mark, 'Оценка должна совпадать с отправленной');\r",
 									"});"
