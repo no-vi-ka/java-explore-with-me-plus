@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.event.model.Location;
 
@@ -20,7 +23,7 @@ public class EventAdminUpdateDto {
     Long category;
     @Size(max = 7000, min = 20, message = "Длина описания должна быть от 20 до 7000 символов")
     String description;
-    @Future(message = "Дата события должна быть позже настоящего момента")
+    @Future(message = "Датча события должна быть позже настоящего момента")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime eventDate;
     Location location;

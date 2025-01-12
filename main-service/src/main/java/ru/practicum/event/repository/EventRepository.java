@@ -1,7 +1,9 @@
 package ru.practicum.event.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import ru.practicum.event.model.Event;
 
@@ -16,4 +18,14 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
     boolean existsByCategory_Id(long categoryId);
 
     List<Event> findAllByIdIn(List<Long> ids);
+
+    @Query(value = """
+            SELECT e
+            FROM Event e
+            JOIN Rating r ON e.id = r.event.id
+            WHERE r.mark = 'LIKE'
+            GROUP BY e.id
+            ORDER BY COUNT(r.id) DESC
+            """)
+    Page<Event> findMostLikedEvents(Pageable pageable);
 }

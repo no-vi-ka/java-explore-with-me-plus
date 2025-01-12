@@ -21,9 +21,9 @@ public class PublicCompilationController {
 
     @GetMapping
     public ResponseEntity<List<CompilationDto>> getAllCompilations(
-            @RequestParam(required = false, defaultValue = "false") String pinned,
-            @RequestParam(required = false, defaultValue = "0") Integer from,
-            @Positive @RequestParam(required = false, defaultValue = "10") Integer size) {
+                @RequestParam(required = false, defaultValue = "false") String pinned,
+            @RequestParam(required = false, defaultValue = "0") int from,
+            @Positive @RequestParam(required = false, defaultValue = "10") int size) {
         log.info("Get all compilations with params: from = {}, size = {}.", from, size);
         CompilationParam param = new CompilationParam();
         param.setIsPinned(Boolean.valueOf(pinned));
