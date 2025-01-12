@@ -51,19 +51,11 @@ public class RatingServiceImpl implements RatingService {
         return ratingMapper.toRatingDto(newMark);
     }
 
-    private static Rating getRating(NewRatingDto newRatingDto, User user, Event event) {
-        return Rating.builder()
-                .user(user)
-                .event(event)
-                .mark(newRatingDto.getMark())
-                .build();
-    }
-
     @Override
     public RatingDto update(long userId, long eventId, long ratingId, UpdateRatingDto updateRatingDto) {
-        Rating rating = ratingRepository.findByIdAndUserId(eventId, userId).orElseThrow(() ->
+        Rating rating = ratingRepository.findByIdAndUserId(ratingId, userId).orElseThrow(() ->
                 new NotFoundException(String.format(
-                        "Rating with userId = %d and id = %d was not found", userId, eventId)));
+                        "Rating with userId = %d and id = %d was not found", userId, ratingId)));
         Mark newMark = updateRatingDto.getMark();
         rating.setMark(newMark);
 
@@ -92,5 +84,12 @@ public class RatingServiceImpl implements RatingService {
 
         ratingRepository.deleteById(ratingId);
         log.info("Rating mark '{}' deleted", ratingId);
+    }
+    private static Rating getRating(NewRatingDto newRatingDto, User user, Event event) {
+        return Rating.builder()
+                .user(user)
+                .event(event)
+                .mark(newRatingDto.getMark())
+                .build();
     }
 }

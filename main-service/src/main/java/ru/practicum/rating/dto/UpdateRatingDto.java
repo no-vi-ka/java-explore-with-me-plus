@@ -12,8 +12,6 @@ import ru.practicum.rating.mark.Mark;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateRatingDto {
-    @NotNull(message = "Поле user должно быть указано.")
-    Long userId;
     @NotNull(message = "Поле mark должно быть указано.")
     Mark mark;
 }
