@@ -85,6 +85,7 @@ public class RatingServiceImpl implements RatingService {
         ratingRepository.deleteById(ratingId);
         log.info("Rating mark '{}' deleted", ratingId);
     }
+
     private static Rating getRating(NewRatingDto newRatingDto, User user, Event event) {
         return Rating.builder()
                 .user(user)
