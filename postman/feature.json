@@ -894,7 +894,7 @@
 									"});\r",
 									"\r",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
-									"    pm.expect(target.id).equal(pm.variables.get(\"ratingId\"));\r",
+									"    pm.expect(Number(target.id)).to.equal(Number(pm.variables.get(\"ratingId\")));\r",
 									"    pm.expect(source.mark).equal(target.mark, 'Оценка должна совпадать с отправленной');\r",
 									"});"
 								],
