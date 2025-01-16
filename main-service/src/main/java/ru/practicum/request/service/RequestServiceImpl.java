@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.errors.exceptions.ConditionsNotMetException;
 import ru.practicum.errors.exceptions.NotFoundException;
 import ru.practicum.event.model.Event;
@@ -35,6 +36,7 @@ public class RequestServiceImpl implements RequestService {
     RequestMapper requestMapper;
 
     @Override
+    @Transactional
     public ParticipationRequestDto createParticipationRequest(long userId, long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new NotFoundException(String.format("Событие с id=%d не найдено", eventId))
@@ -89,6 +91,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public EventRequestStatusUpdateResult changeEventRequestsStatusByInitiator(EventRequestStatusUpdateRequest updateRequest, long userId, long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new NotFoundException(String.format("Событие с id=%d не найдено", eventId))
@@ -118,6 +121,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto cancelParticipantRequest(long userId, long requestId) {
         Request request = requestRepository.findById(requestId).orElseThrow(
                 () -> new NotFoundException(String.format("Запрос на участие в событии с id запроса=%d не найден", requestId))

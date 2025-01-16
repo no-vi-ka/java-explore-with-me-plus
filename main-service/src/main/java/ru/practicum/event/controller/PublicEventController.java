@@ -46,9 +46,7 @@ public class PublicEventController {
         eventPublicParam.setSort(sort);
         eventPublicParam.setFrom(from);
         eventPublicParam.setSize(size);
-        log.info("Пришел Get запрос /events c параметрами: {}", eventPublicParam);
         List<EventShortDto> events = eventService.getAllPublic(eventPublicParam);
-        log.info("Отправлен ответ Get /events с телом: {}", events);
         statsClient.hit(new StatDto("ewm-main-service", requestUri, clientIp, LocalDateTime.now()));
         return events;
     }
@@ -57,9 +55,7 @@ public class PublicEventController {
     public EventFullDto getById(@PathVariable long id, HttpServletRequest request) {
         String clientIp = request.getRemoteAddr();
         String requestUri = request.getRequestURI();
-        log.info("Пришел Get запрос /events/{id} с id: {}", id);
-        EventFullDto event = eventService.getByIdPublic(id, new StatDto("ewm-main-service", requestUri, clientIp, LocalDateTime.now()));
-        log.info("Отправлен ответ Get /events/{id} с телом: {}", event);
-        return event;
+        return eventService.getByIdPublic(id, new StatDto("ewm-main-service", requestUri, clientIp,
+                LocalDateTime.now()));
     }
 }

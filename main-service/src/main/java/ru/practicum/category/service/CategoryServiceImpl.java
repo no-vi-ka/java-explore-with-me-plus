@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
@@ -28,6 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
     EventRepository eventRepository;
 
     @Override
+    @Transactional
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
         log.info("Starting create category with name = {}.", newCategoryDto.getName());
         checkExists(newCategoryDto.getName());
@@ -38,6 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(long catId) {
         if (!categoryRepository.existsById(catId)) {
             throw new NotFoundException("Category with id = " + catId + " not found.");
@@ -49,6 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto updateCategory(long catId, NewCategoryDto categoryDto) {
         log.info("Starting update category with id = {}, name for update = {}.", catId, categoryDto.getName());
         Category toUpdate = findById(catId);

@@ -27,7 +27,6 @@ public class PublicEventSearchController {
             @RequestParam(value = "limit", required = false, defaultValue = "10") int limit) {
         EventSearchByRatingParam param = new EventSearchByRatingParam();
         param.setLimit(limit);
-        log.info("Пришел GET запрос /events/top-liked c параметрами поиска: {}", param);
         return eventSearchService.searchMostLikedEvents(param);
     }
 }

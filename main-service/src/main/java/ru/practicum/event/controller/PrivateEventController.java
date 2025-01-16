@@ -25,39 +25,26 @@ public class PrivateEventController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto create(@RequestBody @Valid EventNewDto newEvent, @PathVariable long userId) {
-        log.info("Пришел Post запрос /users/{}/events с телом: {}", userId, newEvent);
-        EventFullDto event = eventService.add(newEvent, userId);
-        log.info("Отправлен ответ Post /users/{}/events с телом: {}",userId, event);
-        return event;
+        return eventService.add(newEvent, userId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<EventShortDto> getAllByUser(@RequestParam(defaultValue = "0") int from,
                                       @RequestParam(defaultValue = "10") int size, @PathVariable long userId) {
-        log.info("Пришел Get запрос /users/{}/events?from={}&size={}", userId, from,  size);
-        List<EventShortDto> events = eventService.getAllByUser(userId, PageRequest.of(from, size));
-        log.info("Отправлен ответ Get /users/{}/events?from={}&size={} с телом: {}",userId, from, size, events);
-        return events;
+        return eventService.getAllByUser(userId, PageRequest.of(from, size));
     }
 
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto getById(@PathVariable long userId, @PathVariable long eventId) {
-        log.info("Пришел Get запрос /users/{}/events/{}", userId, eventId);
-        EventFullDto event = eventService.getByIdPrivate(eventId, userId);
-        log.info("Отправлен ответ Get /users/{}/events/{} с телом: {}", userId, eventId, event);
-        return event;
+        return eventService.getByIdPrivate(eventId, userId);
     }
 
     @PatchMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto update(@PathVariable long userId, @PathVariable long eventId,
                                @RequestBody @Valid EventUserUpdateDto eventUpdate) {
-        log.info("Пришел Patch запрос /users/{}/events/{} с телом: {}",
-                userId, eventId, eventUpdate);
-        EventFullDto event = eventService.updatePrivate(userId, eventId, eventUpdate);
-        log.info("Отправлен ответ Patch /users/{}/events/{} с телом: {}", userId, eventId, event);
-        return event;
+        return eventService.updatePrivate(userId, eventId, eventUpdate);
     }
 }

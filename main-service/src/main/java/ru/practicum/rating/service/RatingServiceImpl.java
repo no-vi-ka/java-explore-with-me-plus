@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.errors.exceptions.ConditionsNotMetException;
 import ru.practicum.errors.exceptions.NotFoundException;
 import ru.practicum.event.model.Event;
@@ -30,6 +31,7 @@ public class RatingServiceImpl implements RatingService {
     EventRepository eventRepository;
 
     @Override
+    @Transactional
     public RatingDto create(long userId, long eventId, NewRatingDto newRatingDto) {
         boolean exists = ratingRepository.existsByUserIdAndEventId(userId, eventId);
         if (exists) {
@@ -52,6 +54,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    @Transactional
     public RatingDto update(long userId, long eventId, long ratingId, UpdateRatingDto updateRatingDto) {
         Rating rating = ratingRepository.findByIdAndUserId(ratingId, userId).orElseThrow(() ->
                 new NotFoundException(String.format(
@@ -68,6 +71,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    @Transactional
     public void delete(long userId, long eventId, long ratingId) {
         Rating ratingMark = ratingRepository.findById(ratingId).orElseThrow(() ->
                 new NotFoundException(String.format(

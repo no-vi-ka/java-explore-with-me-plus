@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.ResponseStatDto;
 import ru.practicum.StatDto;
@@ -52,6 +53,7 @@ public class EventServiceImpl implements EventService {
     private final RequestRepository requestRepository;
 
     @Override
+    @Transactional
     public EventFullDto add(EventNewDto newEvent, long userId) {
         LocalDateTime eventDate = newEvent.getEventDate();
         if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
@@ -79,6 +81,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updatePrivate(long userId, long eventId, EventUserUpdateDto eventUpdate) {
         Event event = findByIdAndInitiator(eventId, userId);
 
@@ -114,6 +117,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateAdmin(long eventId, EventAdminUpdateDto eventUpdate) {
         Event event = findById(eventId);
 

@@ -40,18 +40,12 @@ public class AdminEventController {
         eventAdminParam.setRangeStart(rangeStart);
         eventAdminParam.setRangeEnd(rangeEnd);
         eventAdminParam.setPageable(PageRequest.of(from, size));
-        log.info("Пришел Get запрос /admin/events с параметрами: {}", eventAdminParam);
-        List<EventFullDto> events = eventService.getAllByAdmin(eventAdminParam);
-        log.info("Отправлен ответ Get /admin/events с телом: {}", events);
-        return events;
+        return eventService.getAllByAdmin(eventAdminParam);
     }
 
     @PatchMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto update(@PathVariable long eventId, @RequestBody @Valid EventAdminUpdateDto eventUpdate) {
-        log.info("Пришел Patch запрос /admin/events/{} с телом: {}",eventId, eventUpdate);
-        EventFullDto event = eventService.updateAdmin(eventId, eventUpdate);
-        log.info("Отправлен ответ Patch /admin/events/{} с телом: {}", eventId, event);
-        return event;
+        return  eventService.updateAdmin(eventId, eventUpdate);
     }
 }

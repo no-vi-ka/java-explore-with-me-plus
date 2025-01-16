@@ -22,13 +22,11 @@ public class PublicCategoryController {
                                               @PositiveOrZero Integer from,
                                               @RequestParam(name = "size", defaultValue = "10")
                                               @Positive Integer size) {
-        log.info("Get all categories with params: from = {}, size = {}.", from, size);
         return categoryService.getAllCategories(from, size);
     }
 
     @GetMapping("/{catId}")
     public CategoryDto getCategory(@PathVariable long catId) {
-        log.info("Get category by id = {}.", catId);
         return categoryService.getCategoryById(catId);
     }
 

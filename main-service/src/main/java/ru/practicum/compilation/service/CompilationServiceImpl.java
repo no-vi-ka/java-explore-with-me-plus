@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.CompilationParam;
 import ru.practicum.compilation.dto.NewCompilationDto;
@@ -32,6 +33,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         List<Event> eventList = new ArrayList<>();
         if (newCompilationDto.getEvents() != null) {
@@ -40,11 +42,11 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = compilationMapper.toCompilation(newCompilationDto);
         compilation.setEvents(eventList);
         compilationRepository.save(compilation);
-        CompilationDto toReturn = mapToDto(compilation, compilation.getEvents());
-        return toReturn;
+        return mapToDto(compilation, compilation.getEvents());
     }
 
     @Override
+    @Transactional
     public void deleteCompilation(long compId) {
         if (!compilationRepository.existsById(compId)) {
             throw new NotFoundException("Compilation with id = " + compId + " not found.");
@@ -53,6 +55,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional
     public CompilationDto updateCompilation(long compId, UpdateCompilationRequest updateCompilationRequest) {
         Compilation compilationFromTable = compilationRepository.findById(compId).orElseThrow(() ->
                 new NotFoundException("Compilation with id = " + compId + " not found."));
@@ -64,8 +67,7 @@ public class CompilationServiceImpl implements CompilationService {
         if (updateCompilationRequest.getTitle() != null)
             compilationFromTable.setTitle(updateCompilationRequest.getTitle());
         compilationRepository.save(compilationFromTable);
-        CompilationDto toReturn = mapToDto(compilationFromTable, compilationFromTable.getEvents());
-        return toReturn;
+        return mapToDto(compilationFromTable, compilationFromTable.getEvents());
     }
 
     public List<CompilationDto> getAllCompilations(CompilationParam param) {

@@ -24,7 +24,6 @@ public class PublicCompilationController {
                 @RequestParam(required = false, defaultValue = "false") String pinned,
             @RequestParam(required = false, defaultValue = "0") int from,
             @Positive @RequestParam(required = false, defaultValue = "10") int size) {
-        log.info("Get all compilations with params: from = {}, size = {}.", from, size);
         CompilationParam param = new CompilationParam();
         param.setIsPinned(Boolean.valueOf(pinned));
         param.setFrom(from);
@@ -34,7 +33,6 @@ public class PublicCompilationController {
 
     @GetMapping("/{compId}")
     public ResponseEntity<CompilationDto> getCompilationById(@PathVariable long compId) {
-        log.info("Get compilation by id = {}.", compId);
         return ResponseEntity.status(HttpStatus.OK).body(compilationService.getCompilationById(compId));
     }
 }
