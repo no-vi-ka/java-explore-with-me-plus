@@ -3,9 +3,8 @@ package ru.practicum.event.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
@@ -21,11 +20,11 @@ public class EventSearchServiceImpl implements EventSearchService {
     EventRepository eventRepository;
     EventMapper eventMapper;
 
+    @Transactional
     @Override
     public List<EventShortDto> searchMostLikedEvents(EventSearchByRatingParam eventSearchByRatingParam) {
-        PageRequest pageRequest = PageRequest.of(0, eventSearchByRatingParam.getLimit());
-        Page<Event> eventsPage = eventRepository.findMostLikedEvents(pageRequest);
-        List<Event> events = eventsPage.getContent();
+        int limit = eventSearchByRatingParam.getLimit();
+        List<Event> events = eventRepository.findMostLikedEvents(limit);
         return eventMapper.toEventShortDtoList(events);
     }
 }

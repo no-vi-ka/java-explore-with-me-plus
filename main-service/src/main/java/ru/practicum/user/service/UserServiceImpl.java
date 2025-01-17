@@ -70,7 +70,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(long userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
+        User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("User with id = " + userId + " not found."));
+        log.info("User was found. ID = {}", user.getId());
+        return user;
     }
 }

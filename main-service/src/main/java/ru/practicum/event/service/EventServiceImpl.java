@@ -30,7 +30,7 @@ import ru.practicum.request.model.Request;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.model.User;
-import ru.practicum.user.service.UserService;
+import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,11 +46,11 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
-    private final UserService userService;
     private final CategoryService categoryService;
     private final EventMapper eventMapper;
     private final StatsClient statsClient;
     private final RequestRepository requestRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -59,9 +59,13 @@ public class EventServiceImpl implements EventService {
         if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ForbiddenException("Начало события ранее, чем через два часа: " + eventDate);
         }
-        User user = userService.findById(userId);
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("User with id = " + userId + " not found.")
+        );
+
         long categoryId = newEvent.getCategory();
-        Category category = categoryService.findById(categoryId);
+        Category category = categoryService.findByIdOrThrow(categoryId);
         Event event = eventMapper.toEvent(newEvent, category, user);
         return eventMapper.toFullDto(eventRepository.save(event));
     }
@@ -85,13 +89,14 @@ public class EventServiceImpl implements EventService {
     public EventFullDto updatePrivate(long userId, long eventId, EventUserUpdateDto eventUpdate) {
         Event event = findByIdAndInitiator(eventId, userId);
 
-        if (event.getState() == EventState.PUBLISHED) {
+        boolean isPublished = event.getState() == EventState.PUBLISHED;
+        if (isPublished) {
             throw new ConditionsNotMetException("Нельзя обновить опубликованное событие");
         }
 
         Long categoryId = eventUpdate.getCategory();
         if (categoryId != null) {
-            Category category = categoryService.findById(categoryId);
+            Category category = categoryService.findByIdOrThrow(categoryId);
             event.setCategory(category);
         }
 
@@ -131,7 +136,7 @@ public class EventServiceImpl implements EventService {
 
         Long categoryId = eventUpdate.getCategory();
         if (categoryId != null) {
-            Category category = categoryService.findById(categoryId);
+            Category category = categoryService.findByIdOrThrow(categoryId);
             event.setCategory(category);
         }
 
@@ -224,7 +229,7 @@ public class EventServiceImpl implements EventService {
                 List.of(statDto.getUri()), true);
 
         if (!stats.isEmpty()) {
-            eventFullDto.setViews(stats.get(0).getHits());
+            eventFullDto.setViews(stats.getFirst().getHits());
         }
 
         statsClient.hit(statDto);

@@ -1,6 +1,5 @@
 package ru.practicum.event.repository;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +25,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
             WHERE r.mark = 'LIKE'
             GROUP BY e.id
             ORDER BY COUNT(r.id) DESC
+            LIMIT ?1
             """)
-    Page<Event> findMostLikedEvents(Pageable pageable);
+    List<Event> findMostLikedEvents(int limit);
 }
