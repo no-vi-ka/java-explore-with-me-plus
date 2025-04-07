@@ -24,39 +24,27 @@ public class PrivateRequestController {
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto create(@PathVariable(name = "userId") @Positive long userId,
                                           @RequestParam(name = "eventId") @Positive long eventId) {
-        log.info("Пришел POST запрос /users/{}/requests?eventId={}", userId, eventId);
-        var response = requestService.createParticipationRequest(userId, eventId);
-        log.info("Отправлен ответ POST /users/{}/requests?eventId={} с содержимым: {}", userId, eventId, response);
-        return response;
+        return requestService.createParticipationRequest(userId, eventId);
     }
 
     @GetMapping("/requests")
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getAllByParticipantId(@PathVariable(name = "userId") @Positive long userId) {
-        log.info("Пришел GET запрос /users/{}/requests", userId);
-        var response = requestService.getAllByParticipantId(userId);
-        log.info("Отправлен ответ POST /users/{}/requests с содержимым: {}", userId, response);
-        return response;
+        return requestService.getAllByParticipantId(userId);
     }
 
     @PatchMapping("/requests/{requestId}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public ParticipationRequestDto cancelParticipantRequest(@PathVariable(name = "userId") @Positive long userId,
                                                             @PathVariable(name = "requestId") @Positive long requestId) {
-        log.info("Пришел PATCH запрос /users/{}/requests/{}/cancel", userId, requestId);
-        var response = requestService.cancelParticipantRequest(userId, requestId);
-        log.info("Отправлен ответ PATCH /users/{}/requests/{}/cancel с содержимым: {}", userId, requestId, response);
-        return response;
+        return requestService.cancelParticipantRequest(userId, requestId);
     }
 
     @GetMapping("/events/{eventId}/requests")
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getAllEventsOfInitiator(@PathVariable(name = "userId") @Positive long userId,
                                                                  @PathVariable(name = "eventId") @Positive long eventId) {
-        log.info("Пришел GET запрос /users/{}/events/{}/requests", userId, eventId);
-        var response = requestService.getAllByInitiatorIdAndEventId(userId, eventId);
-        log.info("Отправлен ответ POST /users/{}/events/{}/requests с содержимым: {}", userId, eventId, response);
-        return response;
+        return requestService.getAllByInitiatorIdAndEventId(userId, eventId);
     }
 
     @PatchMapping("/events/{eventId}/requests")
@@ -64,9 +52,6 @@ public class PrivateRequestController {
     public EventRequestStatusUpdateResult changeEventRequestsStatus(@PathVariable(name = "userId") @Positive long userId,
                                                                     @PathVariable(name = "eventId") @Positive long eventId,
                                                                     @RequestBody @Valid EventRequestStatusUpdateRequest updateRequest) {
-        log.info("Пришел PATCH запрос /users/{}/events/{}/requests с телом запроса {}", userId, eventId, updateRequest);
-        var response = requestService.changeEventRequestsStatusByInitiator(updateRequest, userId, eventId);
-        log.info("Отправлен ответ PATCH /users/{}/events/{}/requests с содержимым: {}", userId, eventId, response);
-        return response;
+        return requestService.changeEventRequestsStatusByInitiator(updateRequest, userId, eventId);
     }
 }

@@ -3,6 +3,7 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ResponseStatDto;
 import ru.practicum.StatDto;
 import ru.practicum.exception.DateTimeException;
@@ -21,6 +22,7 @@ public class StatsServiceImpl implements StatsService {
     private final StatMapper statMapper;
 
     @Override
+    @Transactional
     public StatDto saveRequest(StatDto statDto) {
         log.info("Save request: {}", statDto);
         Stat stat = statMapper.toEntity(statDto);

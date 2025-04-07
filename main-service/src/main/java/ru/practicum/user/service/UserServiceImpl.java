@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ru.practicum.errors.exceptions.DataAlreadyInUseException;
 import ru.practicum.errors.exceptions.NotFoundException;
@@ -41,6 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto createUser(NewUserRequest newUserRequest) {
         log.info("Starting create user with name = {}, email = {}.", newUserRequest.getName(),
                 newUserRequest.getEmail());
@@ -58,6 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with id = " + userId + " not found.");
@@ -67,7 +70,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(long userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
+        User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("User with id = " + userId + " not found."));
+        log.info("User was found. ID = {}", user.getId());
+        return user;
     }
 }
